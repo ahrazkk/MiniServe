@@ -37,3 +37,10 @@ per token that is ~4,400 tokens of KV cache we could get back by sampling in sma
 **2026-11-07, M7.** Through HTTP, 4 concurrent requests got 68 tok/s versus 117 tok/s inside the
 engine alone: the engine thread and the HTTP thread compete for Python's GIL (the engine holds
 it while launching kernels). vLLM runs its engine in a separate process for exactly this reason.
+
+**2026-11-07, review.** Three entries above overstate. The 95x counts 64 sequences, but fewer were
+decoding (the first ones hit their 40-token limit early, and 64 x 17 KV blocks exceed the
+1,070-block pool); the clean figure is 58x at 32 (18 -> 1,044 tok/s). Launch overhead can't explain
+the 55 ms at one sequence either: four sequences take only 34 ms per step. The 68 vs 117 tok/s gap at
+4 requests compares two different sessions, so the GIL's cost is not yet measured. And the 8 s TTFT
+P99 was a streaming artifact, not slow requests (`docs/RESULTS.md`).

@@ -55,10 +55,15 @@ batch size, after the hidden-sync fix (`results/step_time_v0.json` is before it)
 | 8 | 34.25 | 233.6 | 4.50 ms |
 | 16 | 35.88 | 446.0 | 5.26 ms |
 | 32 | 30.66 | 1,043.5 | 6.78 ms |
-| 64 | 37.29 | 1,716.5 | 9.82 ms |
+| 64 | 37.29 | 1,716.5 (overstated, see below) | 9.82 ms |
 
-Throughput grows 95x from batch 1 to 64 while the step time stays flat: steps are dominated by fixed
-per-step overhead, not batch-dependent GPU work.
+Throughput grows 58x from batch 1 to 32 while the step time stays nearly flat: steps are dominated
+by fixed per-step overhead, not batch-dependent GPU work. Two caveats. The batch-64 tokens/s is too
+high: it divides 64 by the step time, but fewer than 64 sequences were decoding for at least part
+of the timed window (each stops after 40 tokens, so the first ones finish before the timed steps
+end, and 64 sequences of 257+ tokens need 1,088 KV blocks (computed), more than the server's 1,070).
+And batches 1 and 2 are slower per step (55 and 44 ms) than 4 to 64 (31-37 ms); the cause is not
+yet known.
 
 ## Profile of one decode step (batch 8)
 

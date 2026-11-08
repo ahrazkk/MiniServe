@@ -210,16 +210,17 @@ Metrics are defined as in `vllm bench serve`. Every number comes from `results/*
 | Paged KV vs fixed slots | 64 clients | 84.7 tok/s, 4 in flight | **565.9 tok/s, 63 in flight** |
 | Prefix caching | 1,024-token shared prefix, 16 clients | TTFT P50 627 ms, 219 tok/s | **TTFT P50 318 ms, 246 tok/s** |
 
-**Honest caveats.** At *one* client the baseline is faster (24.5 vs 15.7 tok/s): MiniServe's decode
-step is launch-bound (below) and its engine shares a process, and Python's GIL, with the HTTP
-server. The laptop GPU ran at 75-84 °C with a varying clock, so repeated runs differ by up to ~±15%.
+**Honest caveats.** At *one* client the baseline is faster (24.5 vs 15.7 tok/s). A decode step takes
+31-37 ms with 4 to 64 sequences (below), less than the baseline's 41 ms per token, but 55 ms with one
+sequence and 44 ms with two, and why is not yet known; profiling batch 1 is the next step. The
+laptop GPU ran at 75-84 °C with a varying clock, so repeated runs differ by up to ~±15%.
 
 ### What the profiler found
 
 <p align="center"><img src="docs/img/step_time.svg" alt="Decode step time vs batch size: 30 to 55 ms at every batch size, far above the 4 to 10 ms memory-bandwidth floor." width="760"></p>
 
-Inside the engine, throughput grows **95&times;** from 1 to 64 sequences (18 &rarr; 1,717 tok/s) while
-the step time stays flat, at 30-55 ms against a 4-10 ms bandwidth floor. `bench/profile_step.py`
+Inside the engine, throughput grows **58&times;** from 1 to 32 sequences (18 &rarr; 1,044 tok/s) while
+the step time stays nearly flat, at 30-55 ms against a 4-10 ms bandwidth floor. `bench/profile_step.py`
 shows why: about **1,700 kernel launches per step at ~28 µs each** under WSL2, with the GPU idle for
 much of the step. The engine is bound by how fast the CPU can launch work, not by the GPU, which is
 why CUDA graphs are the next milestone.
