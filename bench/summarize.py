@@ -1,7 +1,7 @@
-"""Turn results/*.json into the tables used by docs/RESULTS.md, the README and the textbook.
+"""Turn results/*.json into the tables used by docs/RESULTS.md and the README.
 
     python bench/summarize.py           # markdown tables
-    python bench/summarize.py --js      # plus the RESULTS object pasted into the textbook
+    python bench/summarize.py --js      # plus a RESULTS_JS= line: the W1 numbers as JSON for charts
 
 For each system and concurrency it reports the run with the *median* output throughput (and
 lists every run's throughput, so the spread is visible). Nothing here is typed in by hand.

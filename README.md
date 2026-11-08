@@ -20,14 +20,14 @@ request at a time.
 
 <table>
 <tr>
-<td align="center"><h3>566 tok/s</h3>output throughput at 64 streams</td>
-<td align="center"><h3>20&times;</h3>the Hugging Face baseline</td>
+<td align="center"><h3>566 tok/s</h3>output throughput at 64 clients</td>
+<td align="center"><h3>20&times;</h3>a one-at-a-time Hugging Face server</td>
 <td align="center"><h3>4 &rarr; 63</h3>concurrent requests with paging</td>
 <td align="center"><h3>2&times;</h3>faster first token with prefix caching</td>
 </tr>
 </table>
 
-<p align="center"><img src="docs/img/throughput.svg" alt="Output throughput vs concurrency: MiniServe climbs to 566 tokens per second at 64 clients; the Hugging Face baseline stays near 25; fixed KV slots stay near 85." width="760"></p>
+<p align="center"><img src="docs/img/throughput.svg" alt="Output throughput vs concurrency: MiniServe climbs to 566 tokens per second at 64 clients; the Hugging Face baseline stays between 24 and 28; fixed KV slots reach only 71 to 85." width="760"></p>
 
 ---
 
@@ -307,6 +307,10 @@ docs/                      design notes, results, learning log
 - **Attention gathers K/V** through the block table every step instead of reading pages in place.
   Next: a Triton paged-attention kernel (which also gives CUDA graphs the fixed shapes they need).
 - **Engine and HTTP server share one process** and compete for the GIL. Next: a separate engine process.
+- **Streaming sends a chunk only when there is new text.** About 2% of MiniServe's benchmark requests
+  produce no text until the end, so their first chunk arrives last. That inflates the measured TTFT P99 and
+  makes TPOT read slightly low ([details](docs/RESULTS.md#conditions-and-caveats)). Next: a chunk for
+  every step that produced tokens, in both servers, then re-measure.
 - **Not yet measured:** speculative decoding on copy-heavy prompts, INT8 memory/speed/quality,
   chunked prefill under mixed load, and a head-to-head against vLLM using `vllm bench serve`.
 - One model family (dense Qwen3), one GPU, `n = 1`, no logprobs.

@@ -1,7 +1,7 @@
 {
   "$schema": "https://aka.ms/codetour-schema",
   "title": "MiniServe: one request, end to end",
-  "description": "Follow a streamed completion from the HTTP handler through the scheduler, the KV block manager, the model runner and the GPU, and back out as Server-Sent Events. Pairs with Chapter 14 of docs/learn/MiniServe_Textbook.html.",
+  "description": "Follow a streamed completion from the HTTP handler through the scheduler, the KV block manager, the model runner and the GPU, and back out as Server-Sent Events.",
   "steps": [
     {
       "directory": "src/miniserve",
@@ -84,7 +84,7 @@
       "file": "src/miniserve/spec/rejection.py",
       "pattern": "def verify_sampled\\(",
       "title": "Speculation that never changes the output",
-      "description": "Situation: verifying draft tokens.\nMechanism: accept each draft with probability min(1, p/q); at the first rejection sample from normalize(max(0, p - q)); if all pass, a bonus token from p.\nImplication: the output distribution is exactly the target's (proof in Chapter 10).\nGotcha: rejected drafts need no rollback: num_computed simply doesn't count them."
+      "description": "Situation: verifying draft tokens.\nMechanism: accept each draft with probability min(1, p/q); at the first rejection sample from normalize(max(0, p - q)); if all pass, a bonus token from p.\nImplication: the output distribution is exactly the target's (Leviathan et al., 2023; Chen et al., 2023).\nGotcha: rejected drafts need no rollback: num_computed simply doesn't count them."
     },
     {
       "file": "src/miniserve/runner/model_runner.py",

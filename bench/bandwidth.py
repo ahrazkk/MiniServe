@@ -57,7 +57,7 @@ def main() -> None:
     runs.sort()
     median = runs[len(runs) // 2]
 
-    weights_gb = 1.19  # Qwen3-0.6B in BF16 (computed from the config in docs/PLAN.md 5.2)
+    weights_gb = 1.19  # Qwen3-0.6B in BF16: 596M parameters x 2 bytes (computed from config.json)
     env = {
         "date": time.strftime("%Y-%m-%d %H:%M:%S"),
         "gpu": torch.cuda.get_device_name(0),

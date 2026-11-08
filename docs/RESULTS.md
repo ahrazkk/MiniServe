@@ -1,9 +1,13 @@
 # Results
 
-Every number here comes from a file in `results/`. Nothing is typed in by hand: the W1 and W3
-tables are pasted from `python bench/summarize.py`. Rules: same client and prompts for every system,
-warm-up excluded, fixed output lengths, one server on the GPU at a time, P99 only from 500+ requests,
-and negative results reported too.
+Every benchmark number here comes from a file in `results/`. The exceptions say where they come
+from: the correctness checks come from the test runs listed with them, and the start-up memory
+profile and the profiler breakdown come from a server log and from `bench/profile_step.py` (its
+console output and a 25 MB trace), which are kept out of the repo; rerun them to reproduce. The W1
+and W3 tables are pasted from `python bench/summarize.py`, not typed in by hand. Rules: same client
+and prompts for every system, warm-up excluded, fixed output lengths, one server on the GPU at a
+time, and negative results reported too. P99 is only meaningful for the 500-request MiniServe W1
+runs (16, 32 and 64 clients); in the smaller runs it is set by the slowest one or two requests.
 
 ## Environment (M0)
 
@@ -119,6 +123,28 @@ CPU-launch-bound under WSL2. RMSNorm accounts for about half of the launches.
   prompt tokens at concurrency 4). Those results were thrown out. The `ms_*` runs use a distinct seed
   per run
   (`seed = 1000 * concurrency + run`).
-- **Fewer requests** at low concurrency (20 at 1 client, 64 at 4) and for the fixed-slot and
-  baseline comparisons, which only report medians. P99 values are only quoted from runs with 500
-  requests.
+- **Fewer requests** at low concurrency (20 at 1 client, 64 at 4) and for the fixed-slot, baseline
+  and W3 comparisons. Read only their medians: with 100 or fewer requests, P99 is set by the slowest
+  one or two.
+- **TTFT P99 is inflated by a streaming artifact, not by slow requests.** All values in this item
+  are computed from the per-request data in the same files.
+  - *What happens.* The server sends an SSE chunk only when the detokenizer releases new text,
+    plus a final chunk when the request ends (`generate_text` in `src/miniserve/api/server.py`).
+    65 of the 2,984 MiniServe requests (2.2%) produced no text until the end. They got a single
+    chunk for all 128 tokens, so their measured TTFT is their whole latency (7.3-13.5 s at 4-32
+    clients).
+  - *Why.* It follows the prompt, not the load: with the same prompt seed, the same requests went
+    silent with paged or fixed KV slots and with prefix caching on or off. Most likely the model
+    started with an end-of-sequence token (`<|endoftext|>` or `<|im_end|>`) and kept producing
+    tokens that decode to nothing, which `ignore_eos` lets continue (inferred: token ids are not
+    recorded). The HF baseline uses the same chunk rule but masks both end-of-sequence ids
+    (`min_new_tokens`); none of its 116 requests got a single chunk, including on the same prompts.
+  - *Size of the effect.* Without these requests, TTFT P99 is 551 ms instead of 8,924 at
+    16 clients, 1,029 ms instead of 8,160 at 32 (median run; 1,029-2,008 ms across the three runs)
+    and 11,232 ms instead of 15,186 at 64, where most of the tail is real (inferred from the 154
+    preemptions: the KV pool holds about 44 finished requests). These requests also count as 0 ms
+    in TPOT, so TPOT P50 reads about 2 ms low (65.5 instead of 67.5 ms at 16 clients, 85.1 instead
+    of 87.1 at 64). In W3, the prefix-on P99 of 6,539 ms is two such requests (529 ms without
+    them).
+  - *Fix.* Send a chunk for every engine step that produced tokens, even with empty text, in both
+    servers, then re-measure TTFT, TPOT and ITL.
