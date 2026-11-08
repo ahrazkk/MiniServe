@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-07 16:20:01",
+  "gpu": "NVIDIA GeForce RTX 3060 Laptop GPU",
+  "compute_capability": [
+    8,
+    6
+  ],
+  "driver": "617.42",
+  "vram_total_mib": 6143,
+  "vram_free_mib_after_cuda_init": 5118,
+  "vram_used_by_others_mib_before_init": "701 MiB",
+  "torch": "2.15.0+cu132",
+  "torch_cuda": "13.2",
+  "python": "3.12.3",
+  "kernel": "6.18.54.1-microsoft-standard-WSL2",
+  "copy_bandwidth_gbps_runs": [
+    312.5,
+    318.8,
+    318.8,
+    319.5,
+    319.7
+  ],
+  "copy_bandwidth_gbps_median": 318.8,
+  "decode_speed_limit_ms_per_step": 3.73,
+  "decode_speed_limit_tokens_per_s_single_request": 268
+}

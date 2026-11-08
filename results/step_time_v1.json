@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "model": "/root/models/Qwen3-0.6B",
+    "context": 256,
+    "steps": 32,
+    "gpu": "NVIDIA GeForce RTX 3060 Laptop GPU",
+    "torch": "2.15.0+cu132",
+    "date": "2026-11-07 16:50"
+  },
+  "rows": [
+    {
+      "batch": 1,
+      "ms_per_step": 55.29229990624995,
+      "tokens_per_s": 18.085700932960563,
+      "memory_bound_ms": 3.8343082559598494
+    },
+    {
+      "batch": 2,
+      "ms_per_step": 43.94271040624997,
+      "tokens_per_s": 45.51380607864234,
+      "memory_bound_ms": 3.9292820075282306
+    },
+    {
+      "batch": 4,
+      "ms_per_step": 34.01258818750019,
+      "tokens_per_s": 117.60351720219931,
+      "memory_bound_ms": 4.119229510664994
+    },
+    {
+      "batch": 8,
+      "ms_per_step": 34.24631612499995,
+      "tokens_per_s": 233.60176816682383,
+      "memory_bound_ms": 4.499124516938519
+    },
+    {
+      "batch": 16,
+      "ms_per_step": 35.87649865625009,
+      "tokens_per_s": 445.97440105021565,
+      "memory_bound_ms": 5.258914529485571
+    },
+    {
+      "batch": 32,
+      "ms_per_step": 30.664656437499936,
+      "tokens_per_s": 1043.54666634605,
+      "memory_bound_ms": 6.778494554579674
+    },
+    {
+      "batch": 64,
+      "ms_per_step": 37.286035156250065,
+      "tokens_per_s": 1716.4603244030363,
+      "memory_bound_ms": 9.81765460476788
+    }
+  ]
+}

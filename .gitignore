@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+# Model weights never go in the repo; they live in /root/models inside WSL.
+models/
+*.safetensors
+# Large traces from the profiler; keep the small JSON results.
+results/*.trace.json

@@ -1,0 +1,74 @@
+server: miniserve serve --model /root/models/Qwen3-0.6B --port 8000 --served-model-name Qwen/Qwen3-0.6B
+
+=== miniserve_in256_out128_c1_r0 ===
+  completed 20 (failed 0) in 195.1 s
+  output throughput      13.1 tok/s | requests 0.10/s | goodput 0.03/s
+  TTFT  mean     80.2  p50     69.1  p90    147.5  p99    188.8 ms
+  TPOT  mean     76.2  p50     70.2  p90    105.1  p99    146.8 ms
+  ITL   mean    104.9  p50     58.9  p90    159.3  p99    285.0 ms
+  E2EL  mean   9755.9  p50   8976.0  p90  13409.5  p99  18802.5 ms
+  server: peak running 1.0, preemptions 0.0, prefix hits 0.0 tokens, spec accepted 0.0/0.0
+  saved /mnt/c/Users/1kibr/Desktop/ResumeProjects/MiniServe/results/miniserve_in256_out128_c1_r0.json
+
+=== miniserve_in256_out128_c4_r0 ===
+  completed 64 (failed 0) in 112.3 s
+  output throughput      73.0 tok/s | requests 0.57/s | goodput 0.25/s
+  TTFT  mean    236.0  p50    127.2  p90    222.6  p99   2623.2 ms
+  TPOT  mean     53.4  p50     50.9  p90     61.8  p99    103.8 ms
+  ITL   mean     64.8  p50     47.4  p90     85.0  p99    186.8 ms
+  E2EL  mean   7013.9  p50   6592.7  p90   7977.0  p99  13430.3 ms
+  server: peak running 4.0, preemptions 0.0, prefix hits 4800.0 tokens, spec accepted 0.0/0.0
+  saved /mnt/c/Users/1kibr/Desktop/ResumeProjects/MiniServe/results/miniserve_in256_out128_c4_r0.json
+
+=== miniserve_in256_out128_c16_r0 ===
+  completed 500 (failed 0) in 195.7 s
+  output throughput     327.0 tok/s | requests 2.55/s | goodput 2.07/s
+  TTFT  mean    488.3  p50    286.8  p90    435.8  p99   6064.9 ms
+  TPOT  mean     44.3  p50     43.2  p90     52.7  p99     74.7 ms
+  ITL   mean     51.0  p50     39.5  p90     63.5  p99    184.3 ms
+  E2EL  mean   6108.4  p50   5866.5  p90   7020.4  p99   9909.9 ms
+  server: peak running 16.0, preemptions 0.0, prefix hits 0.0 tokens, spec accepted 0.0/0.0
+  saved /mnt/c/Users/1kibr/Desktop/ResumeProjects/MiniServe/results/miniserve_in256_out128_c16_r0.json
+
+=== miniserve_in256_out128_c64_r0 ===
+  completed 500 (failed 0) in 114.6 s
+  output throughput     558.4 tok/s | requests 4.36/s | goodput 0.00/s
+  TTFT  mean   2321.6  p50   1087.0  p90   6157.7  p99  12552.2 ms
+  TPOT  mean     93.2  p50     86.3  p90    135.5  p99    167.8 ms
+  ITL   mean    107.9  p50     70.2  p90    129.6  p99    298.2 ms
+  E2EL  mean  14163.5  p50  12332.6  p90  20318.4  p99  22873.1 ms
+  server: peak running 63.0, preemptions 154.0, prefix hits 7744.0 tokens, spec accepted 0.0/0.0
+  saved /mnt/c/Users/1kibr/Desktop/ResumeProjects/MiniServe/results/miniserve_in256_out128_c64_r0.json
+server: miniserve serve --model /root/models/Qwen3-0.6B --port 8000 --served-model-name Qwen/Qwen3-0.6B
+
+=== miniserve_in256_out128_c32_r0 ===
+  completed 500 (failed 0) in 180.3 s
+  output throughput     354.9 tok/s | requests 2.77/s | goodput 0.00/s
+  TTFT  mean    777.4  p50    451.4  p90    703.9  p99   9975.9 ms
+  TPOT  mean     83.2  p50     72.4  p90    124.7  p99    156.6 ms
+  ITL   mean     95.0  p50     65.8  p90    184.3  p99    292.7 ms
+  E2EL  mean  11345.9  p50   9593.8  p90  16347.5  p99  20256.3 ms
+  server: peak running 32.0, preemptions 0.0, prefix hits 0.0 tokens, spec accepted 0.0/0.0
+  saved /mnt/c/Users/1kibr/Desktop/ResumeProjects/MiniServe/results/miniserve_in256_out128_c32_r0.json
+
+=== miniserve_in256_out128_c32_r1 ===
+  completed 500 (failed 0) in 210.8 s
+  output throughput     303.5 tok/s | requests 2.37/s | goodput 0.00/s
+  TTFT  mean    921.8  p50    508.5  p90    825.2  p99  13091.1 ms
+  TPOT  mean     96.7  p50     90.6  p90    157.3  p99    210.2 ms
+  ITL   mean    110.4  p50     80.8  p90    195.6  p99    312.1 ms
+  E2EL  mean  13205.8  p50  12202.8  p90  20365.8  p99  27213.3 ms
+  server: peak running 32.0, preemptions 0.0, prefix hits 0.0 tokens, spec accepted 0.0/0.0
+  saved /mnt/c/Users/1kibr/Desktop/ResumeProjects/MiniServe/results/miniserve_in256_out128_c32_r1.json
+
+=== miniserve_in256_out128_c32_r2 ===
+  completed 500 (failed 0) in 156.3 s
+  output throughput     409.6 tok/s | requests 3.20/s | goodput 0.00/s
+  TTFT  mean    686.1  p50    439.5  p90    642.2  p99   9819.0 ms
+  TPOT  mean     71.8  p50     63.6  p90     87.7  p99    183.5 ms
+  ITL   mean     82.0  p50     57.0  p90    127.2  p99    270.1 ms
+  E2EL  mean   9807.6  p50   9116.2  p90  11639.6  p99  23805.2 ms
+  server: peak running 32.0, preemptions 0.0, prefix hits 0.0 tokens, spec accepted 0.0/0.0
+  saved /mnt/c/Users/1kibr/Desktop/ResumeProjects/MiniServe/results/miniserve_in256_out128_c32_r2.json
+server: miniserve serve --model /root/models/Qwen3-0.6B --port 8000 --served-model-name Qwen/Qwen3-0.6B --kv-reservation full --no-prefix-caching
+EXIT CODE 143

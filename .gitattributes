@@ -1,0 +1,4 @@
+# Keep LF line endings everywhere: the shell scripts run inside WSL and break with CRLF.
+* text=auto eol=lf
+*.ps1 text eol=crlf
+*.png binary

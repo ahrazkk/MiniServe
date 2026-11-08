@@ -1,0 +1,106 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "MiniServe: one request, end to end",
+  "description": "Follow a streamed completion from the HTTP handler through the scheduler, the KV block manager, the model runner and the GPU, and back out as Server-Sent Events. Pairs with Chapter 14 of docs/learn/MiniServe_Textbook.html.",
+  "steps": [
+    {
+      "directory": "src/miniserve",
+      "title": "The map",
+      "description": "Everything lives here. `api/` speaks HTTP, `engine/` decides what runs, `runner/` runs it on the GPU, `model/` and `attention/` are the network. Nothing below `engine/` knows HTTP exists, which is why every engine test runs without a server."
+    },
+    {
+      "file": "src/miniserve/config.py",
+      "pattern": "class EngineConfig\\(BaseModel\\):",
+      "title": "Every knob in one place",
+      "description": "Situation: the engine's whole configuration.\nMechanism: each optimization (chunked prefill, prefix caching, paged vs full KV reservation, speculation, INT8) is a flag.\nImplication: the ablation table is just the same engine with flags flipped.\nGotcha: without chunked prefill the token budget is raised to max_model_len, or a long prompt could never be scheduled."
+    },
+    {
+      "file": "src/miniserve/api/server.py",
+      "pattern": "async def completions\\(req: CompletionRequest\\)",
+      "title": "A request arrives",
+      "description": "Situation: POST /v1/completions.\nMechanism: validate (n=1, prompt + max_tokens <= max_model_len), tokenize, refuse with 503 if the waiting queue is full, then stream or collect.\nImplication: bad requests fail before touching the engine.\nGotcha: the SSE bytes are written by hand so the stream is exactly OpenAI's (no keep-alive comment lines)."
+    },
+    {
+      "file": "src/miniserve/api/server.py",
+      "pattern": "async def generate_text\\(",
+      "title": "Tokens become text, safely",
+      "description": "Situation: the per-request consumer of engine outputs.\nMechanism: IncrementalDetokenizer turns ids into text without splitting an emoji; StopChecker cuts at stop strings with hold-back.\nImplication: `aclosing()` plus the `finally` guarantee `engine.abort()` runs when the client disconnects or a stop string hits.\nGotcha: forgetting the abort leaks KV blocks until max_tokens."
+    },
+    {
+      "file": "src/miniserve/engine/engine.py",
+      "pattern": "class AsyncEngine:",
+      "title": "Two threads, two kinds of queue",
+      "description": "Situation: the bridge between asyncio and the GPU loop.\nMechanism: requests go in through one thread-safe `queue.Queue`; tokens come back through one `asyncio.Queue` per request via `loop.call_soon_threadsafe`.\nImplication: the event loop never blocks on GPU work.\nGotcha: both threads share the GIL; at concurrency 4 HTTP throughput was well below the engine's own. vLLM uses a separate process."
+    },
+    {
+      "file": "src/miniserve/engine/engine.py",
+      "pattern": "def step\\(self\\) -> list\\[RequestOutput\\]:",
+      "title": "The heart: one engine step",
+      "description": "Situation: called forever by the engine thread.\nMechanism: schedule -> execute -> update. Three lines.\nImplication: continuous batching is simply re-running `schedule()` every step, so sequences join and leave at token granularity.\nGotcha: a step with nothing scheduled returns immediately; the thread then blocks on its inbox instead of spinning."
+    },
+    {
+      "file": "src/miniserve/engine/scheduler.py",
+      "pattern": "def schedule\\(self\\) -> SchedulerOutput:",
+      "title": "Who runs this step",
+      "description": "Situation: the per-step decision.\nMechanism: one token budget; running sequences first (oldest first, usually 1 token each), then waiting requests FCFS while budget, memory and max_num_seqs allow. A prompt longer than the remaining budget is chunked.\nImplication: decodes never wait behind a big prefill.\nGotcha: in a step that had to preempt, no new request is admitted."
+    },
+    {
+      "file": "src/miniserve/engine/scheduler.py",
+      "pattern": "victim = self\\.running\\.pop\\(\\)",
+      "title": "Out of memory: preempt the newest",
+      "description": "Situation: a running sequence needs a KV block and none is free.\nMechanism: pop the newest running sequence, free its blocks, put it at the front of the waiting queue; it is prefilled again later (recompute, like vLLM V1).\nImplication: older requests keep making progress (fairness), and the cheapest work is redone.\nGotcha: if the sequence being scheduled is itself the newest, it preempts itself and the loop stops."
+    },
+    {
+      "file": "src/miniserve/engine/block_manager.py",
+      "pattern": "def find_cached_prefix\\(self, seq: Sequence\\) -> list\\[int\\]:",
+      "title": "Prefix cache lookup",
+      "description": "Situation: admission of a new request.\nMechanism: walk the prompt block by block; each full block's hash chains the previous block's hash, so a hit means the whole prefix matches.\nImplication: shared system prompts are computed once.\nGotcha: the last prompt token is never matched; it must run through the model to produce logits."
+    },
+    {
+      "file": "src/miniserve/runner/model_runner.py",
+      "pattern": "def prepare\\(self, scheduled: list\\[ScheduledSeq\\]\\) -> _StepInputs:",
+      "title": "The flat batch",
+      "description": "Situation: turning the plan into tensors.\nMechanism: every scheduled sequence's new tokens are concatenated into one batch with per-token positions and KV slots (block_table[p // 16] * 16 + p % 16).\nImplication: sequences of any length share one forward pass with no padding.\nGotcha: only the last row of each sequence (or every row of a speculative verify) gets logits."
+    },
+    {
+      "file": "src/miniserve/attention/backends.py",
+      "pattern": "def paged_attention\\(",
+      "title": "Attention through the block tables",
+      "description": "Situation: the only operation that looks across tokens.\nMechanism: write new K/V into their slots, then gather each sequence's keys through its block table and attend; GQA by folding the 2 query heads of each KV head into the query dimension.\nImplication: correct paged attention without a custom kernel.\nGotcha: the gather is an extra copy every step; a Triton paged kernel would read blocks in place (the planned level-up)."
+    },
+    {
+      "file": "src/miniserve/model/qwen3.py",
+      "pattern": "class Qwen3Attention\\(nn\\.Module\\):",
+      "title": "The model's attention layer",
+      "description": "Situation: Qwen3's attention.\nMechanism: one fused qkv matmul, QK-norm per head, RoPE at each token's own position, then paged attention.\nImplication: fused matrices mean fewer kernel launches, which matters because the engine is launch-bound.\nGotcha: forget QK-norm and the model still produces fluent nonsense; the float64 logit test catches it."
+    },
+    {
+      "file": "src/miniserve/runner/model_runner.py",
+      "pattern": "flat = torch\\.cat\\(pending\\)\\.tolist\\(\\)",
+      "title": "The one sync",
+      "description": "Situation: the end of a step.\nMechanism: sampled tokens and speculation results are concatenated and copied to the CPU once.\nImplication: the CPU can keep queueing work until this point.\nGotcha: hidden syncs (.item(), boolean-mask indexing, torch.tensor(..., device='cuda') from pageable memory) elsewhere would stall the CPU mid-step."
+    },
+    {
+      "file": "src/miniserve/spec/rejection.py",
+      "pattern": "def verify_sampled\\(",
+      "title": "Speculation that never changes the output",
+      "description": "Situation: verifying draft tokens.\nMechanism: accept each draft with probability min(1, p/q); at the first rejection sample from normalize(max(0, p - q)); if all pass, a bonus token from p.\nImplication: the output distribution is exactly the target's (proof in Chapter 10).\nGotcha: rejected drafts need no rollback: num_computed simply doesn't count them."
+    },
+    {
+      "file": "src/miniserve/runner/model_runner.py",
+      "pattern": "def profile_num_blocks\\(self\\) -> int:",
+      "title": "How big is the KV pool?",
+      "description": "Situation: start-up.\nMechanism: run a worst-case prefill and decode, measure peak memory, give the KV pool total x 0.80 - in use - activations.\nImplication: 1,070 blocks = 17,120 tokens on the RTX 3060 Laptop.\nGotcha: 488 MiB of the peak is the sampler's top-k/top-p sort; shrinking it is ~4,400 tokens of KV back."
+    },
+    {
+      "file": "tests/correctness/test_engine_equivalence.py",
+      "pattern": "def test_variants_match_default\\(",
+      "title": "How we know it all still works",
+      "description": "Situation: the most important test.\nMechanism: every optimization (no prefix cache, full reservation, chunking, forced preemption, speculation, combinations) must produce exactly the same greedy tokens as the default, in float64 on the CPU, and leave no leaked blocks.\nImplication: optimizations change speed, never output.\nGotcha: in BF16 on a GPU, exact equality would be flaky (batch shape changes reduction order); that's why these run in float64."
+    },
+    {
+      "title": "Where to go next",
+      "description": "You can now follow any request from POST to [DONE]. Try a change: start the server with --max-num-seqs 1 (you've rebuilt the naive baseline from MiniServe's parts), or preempt the oldest sequence instead of the newest and see which test notices."
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+2026-11-07 17:11:33,667 INFO miniserve.engine.engine: loaded /root/models/Qwen3-0.6B in 16.5 s
+2026-11-07 17:11:37,333 INFO miniserve.runner.model_runner: memory profile: total 6144 MiB, in use 2554 MiB (weights 1141), peak activations 488 MiB -> KV pool 1872 MiB = 1070 blocks = 17120 tokens
+2026-11-07 17:11:37,376 INFO miniserve.engine.engine: KV cache: 1070 blocks x 16 tokens = 17120 tokens (1872 MiB); 4 full-length requests fit
+2026-11-07 17:11:37,848 INFO miniserve.cli: serving Qwen/Qwen3-0.6B on http://127.0.0.1:8000

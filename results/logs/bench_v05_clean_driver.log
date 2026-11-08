@@ -1,0 +1,74 @@
+server: miniserve serve --model /root/models/Qwen3-0.6B --port 8000 --served-model-name Qwen/Qwen3-0.6B
+
+=== ms_in256_out128_c1_r0 ===
+  completed 20 (failed 0) in 162.9 s
+  output throughput      15.7 tok/s | requests 0.12/s | goodput 0.00/s
+  TTFT  mean     77.6  p50     64.5  p90    115.5  p99    176.2 ms
+  TPOT  mean     63.5  p50     56.9  p90     79.2  p99     97.2 ms
+  ITL   mean     67.9  p50     56.1  p90     99.3  p99    196.0 ms
+  E2EL  mean   8146.4  p50   7289.9  p90  10127.1  p99  12423.5 ms
+  server: peak running 1.0, preemptions 0.0, prefix hits 0.0 tokens, spec accepted 0.0/0.0
+  saved /mnt/c/Users/1kibr/Desktop/ResumeProjects/MiniServe/results/ms_in256_out128_c1_r0.json
+
+=== ms_in256_out128_c4_r0 ===
+  completed 64 (failed 0) in 128.9 s
+  output throughput      63.5 tok/s | requests 0.50/s | goodput 0.00/s
+  TTFT  mean    435.0  p50    164.3  p90    280.9  p99   8136.4 ms
+  TPOT  mean     60.0  p50     60.1  p90     73.0  p99     75.8 ms
+  ITL   mean     65.8  p50     55.6  p90     96.4  p99    179.2 ms
+  E2EL  mean   8056.7  p50   7826.1  p90   9458.0  p99   9785.8 ms
+  server: peak running 4.0, preemptions 0.0, prefix hits 0.0 tokens, spec accepted 0.0/0.0
+  saved /mnt/c/Users/1kibr/Desktop/ResumeProjects/MiniServe/results/ms_in256_out128_c4_r0.json
+
+=== ms_in256_out128_c16_r0 ===
+  completed 500 (failed 0) in 290.1 s
+  output throughput     220.6 tok/s | requests 1.72/s | goodput 0.00/s
+  TTFT  mean    515.6  p50    319.9  p90    435.6  p99   8923.8 ms
+  TPOT  mean     67.8  p50     65.5  p90     88.5  p99    101.7 ms
+  ITL   mean     74.9  p50     62.5  p90    109.0  p99    211.0 ms
+  E2EL  mean   9122.9  p50   8917.6  p90  11541.9  p99  13233.3 ms
+  server: peak running 16.0, preemptions 0.0, prefix hits 0.0 tokens, spec accepted 0.0/0.0
+  saved /mnt/c/Users/1kibr/Desktop/ResumeProjects/MiniServe/results/ms_in256_out128_c16_r0.json
+
+=== ms_in256_out128_c64_r0 ===
+  completed 500 (failed 0) in 113.1 s
+  output throughput     565.9 tok/s | requests 4.42/s | goodput 0.00/s
+  TTFT  mean   2335.6  p50   1052.6  p90   6270.7  p99  15186.3 ms
+  TPOT  mean     91.8  p50     85.1  p90    128.8  p99    167.0 ms
+  ITL   mean    101.5  p50     67.7  p90    129.5  p99    289.2 ms
+  E2EL  mean  13995.4  p50  12302.3  p90  19980.3  p99  24068.9 ms
+  server: peak running 63.0, preemptions 154.0, prefix hits 7744.0 tokens, spec accepted 0.0/0.0
+  saved /mnt/c/Users/1kibr/Desktop/ResumeProjects/MiniServe/results/ms_in256_out128_c64_r0.json
+server: miniserve serve --model /root/models/Qwen3-0.6B --port 8000 --served-model-name Qwen/Qwen3-0.6B
+
+=== ms_in256_out128_c32_r0 ===
+  completed 500 (failed 0) in 156.0 s
+  output throughput     410.4 tok/s | requests 3.21/s | goodput 0.00/s
+  TTFT  mean    699.7  p50    447.4  p90    626.3  p99   8875.9 ms
+  TPOT  mean     71.5  p50     72.4  p90     87.1  p99    103.8 ms
+  ITL   mean     81.3  p50     64.4  p90    113.1  p99    236.6 ms
+  E2EL  mean   9781.3  p50   9800.7  p90  11511.1  p99  13551.1 ms
+  server: peak running 32.0, preemptions 0.0, prefix hits 0.0 tokens, spec accepted 0.0/0.0
+  saved /mnt/c/Users/1kibr/Desktop/ResumeProjects/MiniServe/results/ms_in256_out128_c32_r0.json
+
+=== ms_in256_out128_c32_r1 ===
+  completed 500 (failed 0) in 134.7 s
+  output throughput     475.0 tok/s | requests 3.71/s | goodput 0.00/s
+  TTFT  mean    705.5  p50    438.3  p90    748.1  p99   8387.9 ms
+  TPOT  mean     60.9  p50     61.4  p90     67.7  p99     80.2 ms
+  ITL   mean     67.8  p50     53.7  p90     90.9  p99    220.0 ms
+  E2EL  mean   8433.6  p50   8242.2  p90   9589.9  p99  10590.7 ms
+  server: peak running 32.0, preemptions 0.0, prefix hits 0.0 tokens, spec accepted 0.0/0.0
+  saved /mnt/c/Users/1kibr/Desktop/ResumeProjects/MiniServe/results/ms_in256_out128_c32_r1.json
+
+=== ms_in256_out128_c32_r2 ===
+  completed 500 (failed 0) in 152.4 s
+  output throughput     420.0 tok/s | requests 3.28/s | goodput 0.00/s
+  TTFT  mean    579.7  p50    439.7  p90    517.0  p99   8160.2 ms
+  TPOT  mean     70.4  p50     72.9  p90     85.2  p99     90.0 ms
+  ITL   mean     77.2  p50     62.7  p90    110.2  p99    229.5 ms
+  E2EL  mean   9523.6  p50   9683.8  p90  11260.2  p99  11763.9 ms
+  server: peak running 32.0, preemptions 0.0, prefix hits 0.0 tokens, spec accepted 0.0/0.0
+  saved /mnt/c/Users/1kibr/Desktop/ResumeProjects/MiniServe/results/ms_in256_out128_c32_r2.json
+CLEAN SWEEP DONE
+EXIT CODE 0
