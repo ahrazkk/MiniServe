@@ -1,4 +1,4 @@
-# MiniServe
+# MiniServe: an LLM inference server built from scratch
 
 A small LLM inference server written from scratch in Python and PyTorch. It serves **Qwen3-0.6B** on a
 **6 GB RTX 3060 Laptop GPU** through an **OpenAI-compatible streaming API**, and implements the core
