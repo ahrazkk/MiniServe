@@ -1,7 +1,9 @@
 # Results
 
 Every number here comes from a file in `results/`. Nothing is typed in by hand: the W1 and W3
-tables are pasted from `python bench/summarize.py`. Rules: docs/PLAN.md sections 10 and 13.
+tables are pasted from `python bench/summarize.py`. Rules: same client and prompts for every system,
+warm-up excluded, fixed output lengths, one server on the GPU at a time, P99 only from 500+ requests,
+and negative results reported too.
 
 ## Environment (M0)
 
@@ -107,14 +109,15 @@ CPU-launch-bound under WSL2. RMSNorm accounts for about half of the launches.
 ## Conditions and caveats
 
 - **Thermal throttling.** During the runs the laptop GPU sat at 75-84 °C with power capped near
-  54 W, and the SM clock varied between 795 and 1,987 MHz (`results/logs/*_gpu.csv`). Run-to-run
+  54 W, and the SM clock varied between 795 and 1,987 MHz (nvidia-smi logs recorded during the runs,
+  not committed). Run-to-run
   variance at the same setting was up to about ±15%. Where 3 runs exist, the table shows the median
   and lists all three. For cleaner numbers: plugged in, Windows power mode "Best performance",
   laptop on a hard surface or stand, a cool-down between runs.
-- **Superseded runs.** `results/miniserve_in256_out128_*.json` came from a first sweep in which every
-  run used the same prompt seed while the server stayed up, so later runs got prefix-cache hits on
-  prompts repeated from earlier runs (e.g. 4,800 cached prompt tokens at concurrency 4). They are
-  kept for the record but not used. The `ms_*` runs use a distinct seed per run
+- **Discarded runs.** A first sweep used the same prompt seed for every run while the server stayed
+  up, so later runs got prefix-cache hits on prompts repeated from earlier runs (e.g. 4,800 cached
+  prompt tokens at concurrency 4). Those results were thrown out. The `ms_*` runs use a distinct seed
+  per run
   (`seed = 1000 * concurrency + run`).
 - **Fewer requests** at low concurrency (20 at 1 client, 64 at 4) and for the fixed-slot and
   baseline comparisons, which only report medians. P99 values are only quoted from runs with 500

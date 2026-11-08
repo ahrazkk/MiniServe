@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Run a long command in the MiniServe environment with all output in a log file.
 #   bash scripts/run_detached.sh results/logs/bench.log bash scripts/bench_v05.sh
-# Launch it from Windows with Start-Process (see CLAUDE.md) so it outlives the terminal.
+# Launch it from Windows with Start-Process wsl.exe ... -WindowStyle Hidden so it outlives the
+# terminal, and check on it with scripts/bench_status.sh.
 log="$1"
 shift
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
