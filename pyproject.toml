@@ -5,6 +5,7 @@ description = "A small LLM inference server built from scratch: continuous batch
 readme = "README.md"
 requires-python = ">=3.12"
 authors = [{ name = "Ahraz Kibria" }]
+license = { text = "MIT" }
 dependencies = [
     "torch>=2.5",
     "transformers>=4.51",
